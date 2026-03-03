@@ -1,0 +1,60 @@
+{
+  "name": "error-sound-effect",
+  "displayName": "BugLOL - Error Sound Effect",
+  "description": "Plays a trending meme sound when your code hits an error! Search 100k+ sounds instantly.",
+  "version": "1.0.0",
+  "publisher": "iMayuuR",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iMayuuR/BugLOL"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sound",
+    "error",
+    "meme",
+    "funny",
+    "sound effect",
+    "buglol"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "errorSoundEffect.selectSound",
+        "title": "Select Error Sound Effect"
+      }
+    ],
+    "configuration": {
+      "title": "Error Sound Effect Settings",
+      "properties": {
+        "errorSoundEffect.selectedSoundName": {
+          "type": "string",
+          "default": "Fahhh",
+          "description": "The currently selected sound name."
+        },
+        "errorSoundEffect.selectedSoundFilename": {
+          "type": "string",
+          "default": "fahhh_KcgAXfs.mp3",
+          "description": "The downloaded MP3 filename."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "echo Ready"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "18.x"
+  }
+}
