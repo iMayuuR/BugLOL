@@ -1,11 +1,11 @@
-# 🚨 BugLOL — Error Sound Effect for VS Code & More
+# 🚨 BugLOL - 100K+ Error Sound Effects  for VS Code, Antigravity, Cursor & More
 
 Turn your frustrating debugging sessions into instant comedy! **BugLOL** automatically plays a trending meme sound whenever your code hits an error.
 
 <p align="center">
   <strong>Publisher:</strong> <a href="https://github.com/iMayuuR">iMayuuR</a> ·
   <strong>Namespace:</strong> <code>iMayuuR</code> ·
-  <strong>Version:</strong> <code>1.3.5</code> ·
+  <strong>Version:</strong> <code>1.3.6</code> ·
   <strong>License:</strong> MIT
 </p>
 
@@ -76,7 +76,7 @@ BugLOL watches your editor's diagnostics in real-time. Every time a **new error*
 | Platform | Audio Engine | Setup Required? |
 |---|---|---|
 | 🪟 **Windows** (XP / 7 / 10 / 11) | `wscript.exe` + Windows Media Player | ✅ None |
-| 🍎 **macOS** (all versions, incl. Sequoia) | `afplay` (built-in) | ✅ None |
+| 🍎 **macOS** (From ancient Leopard to latest Sequoia 15+) | `afplay` (built-in) | ✅ None |
 | 🐧 **Linux** | `mpg123` / `ffplay` / `paplay` | ⚠️ See below |
 
 ### 🐧 Linux Audio Setup
