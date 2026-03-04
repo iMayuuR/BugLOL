@@ -2,6 +2,19 @@
 
 Turn your frustrating debugging sessions into instant comedy! **BugLOL** automatically plays a trending meme sound whenever your code hits an error.
 
+<p align="center">
+  <strong>Publisher:</strong> <a href="https://github.com/iMayuuR">iMayuuR</a> · 
+  <strong>Namespace:</strong> <code>iMayuuR</code> · 
+  <strong>Version:</strong> <code>1.3.0</code> · 
+  <strong>License:</strong> MIT
+</p>
+
+<p align="center">
+  <a href="https://open-vsx.org/extension/iMayuuR/error-sound-effect">📦 Open VSX</a> · 
+  <a href="https://github.com/iMayuuR/BugLOL">⭐ GitHub</a> · 
+  <a href="https://github.com/iMayuuR/BugLOL/issues">🐛 Report Bug</a>
+</p>
+
 ## ✨ Features
 
 - **🎵 100k+ Sound Library** — Search through over 100,000 meme sounds and sound effects from a massive online database.
