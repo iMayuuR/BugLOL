@@ -133,6 +133,22 @@ function activate(context) {
 
     context.subscriptions.push(diagnosticsDisposable);
 
+    // --- Terminal Error Detection ---
+    // Plays sound when a terminal command fails (non-zero exit code)
+    if (vscode.window.onDidEndTerminalShellExecution) {
+        const terminalDisposable = vscode.window.onDidEndTerminalShellExecution((e) => {
+            // exitCode !== 0 means the command failed
+            if (e.exitCode !== undefined && e.exitCode !== 0) {
+                console.log(`[BugLOL] Terminal command failed with exit code ${e.exitCode}`);
+                playSound(context);
+            }
+        });
+        context.subscriptions.push(terminalDisposable);
+        console.log('[BugLOL] Terminal error detection enabled');
+    } else {
+        console.log('[BugLOL] Terminal shell execution API not available (requires VS Code 1.93+)');
+    }
+
     // Cleanup on deactivation
     context.subscriptions.push({
         dispose: () => {

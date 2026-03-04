@@ -5,6 +5,7 @@ Turn your frustrating debugging sessions into instant comedy! **BugLOL** automat
 ## ✨ Features
 
 - **🎵 100k+ Sound Library** — Search through over 100,000 meme sounds and sound effects from a massive online database.
+- **💀 Terminal Error Detection** — Wrong command in the terminal? Sound plays instantly! Works with any failed shell command.
 - **🔊 One-Click Status Bar** — A persistent `BugLOL` button sits in your status bar. Click it anytime to search and change your error sound.
 - **🎉 Instant Setup** — On first install, a welcome notification guides you to pick your sound immediately. No digging through menus.
 - **⌨️ Keyboard Shortcut** — Press `Ctrl+Shift+M` (`Cmd+Shift+M` on Mac) to instantly open the sound search.
