@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BugLOL — 100K+ Error Sound Effects for Your IDE</title>
+  <meta name="description" content="Turn debugging into comedy. BugLOL plays trending meme sounds when your code hits an error. 100K+ sounds. Works in VS Code, Cursor, Windsurf & more.">
+  <meta name="keywords" content="BugLOL, VS Code extension, error sound, meme sounds, debugging, coding fun, Cursor, Windsurf">
+  <meta name="author" content="iMayuuR">
+
+  <meta property="og:title" content="BugLOL — 100K+ Error Sound Effects for Your IDE">
+  <meta property="og:description" content="Turn debugging into comedy. Plays trending meme sounds when your code errors out.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/iMayuuR/BugLOL/main/images/icon.png">
+  <meta property="og:url" content="https://imayuur.github.io/BugLOL/">
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BugLOL — 100K+ Error Sound Effects">
+  <meta name="twitter:description" content="Turn debugging into comedy. 100K+ meme sounds for your IDE.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/iMayuuR/BugLOL/main/images/icon.png">
+
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #0a0a0f;
+      --bg-card: #111119;
+      --bg-card-hover: #1a1a25;
+      --accent: #facc15;
+      --accent-dim: #ca8a04;
+      --accent-glow: rgba(250, 204, 21, 0.15);
+      --accent-2: #f97316;
+      --text: #f0f0f5;
+      --text-dim: #9494a8;
+      --text-muted: #5a5a70;
+      --border: #222233;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Satoshi', -apple-system, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── GRAIN OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ─── AMBIENT GLOW ─── */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-orb-1 { width: 600px; height: 600px; top: -200px; left: -100px; background: rgba(250,204,21,0.06); }
+    .glow-orb-2 { width: 500px; height: 500px; bottom: -100px; right: -100px; background: rgba(249,115,22,0.05); }
+    .glow-orb-3 { width: 400px; height: 400px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(250,204,21,0.03); }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      background: rgba(10,10,15,0.7);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-logo span {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 999px;
+      color: var(--text) !important;
+      font-size: 0.85rem !important;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .nav-github:hover { border-color: var(--accent-dim); background: var(--bg-card-hover); }
+    .nav-github svg { width: 18px; height: 18px; }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px;
+    }
+    .mobile-menu-btn svg { width: 24px; height: 24px; }
+
+    /* ─── CONTAINER ─── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 160px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(250,204,21,0.2);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    .hero-badge .pulse-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .hero h1 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, #ef4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    /* ─── CTA BUTTONS ─── */
+    .cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.6s ease-out 0.3s both;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Satoshi', sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .cta-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0a0a0f;
+      box-shadow: 0 4px 30px rgba(250,204,21,0.25), 0 0 0 1px rgba(250,204,21,0.1);
+    }
+    .cta-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(250,204,21,0.35), 0 0 0 1px rgba(250,204,21,0.2);
+    }
+    .cta-btn.secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .cta-btn.secondary:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-dim);
+      background: var(--bg-card-hover);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .cta-sub {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      animation: fadeInUp 0.6s ease-out 0.4s both;
+    }
+
+    /* ─── STATS ─── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 64px;
+      animation: fadeInUp 0.6s ease-out 0.5s both;
+    }
+    .stat { text-align: center; }
+    .stat-val {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ─── SECTION COMMON ─── */
+    section { padding: 100px 0; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ─── FEATURES ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(250,204,21,0.15);
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(250,204,21,0.1);
+    }
+    .feature-card h3 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      color: var(--text-dim);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 16px;
+    }
+    .how-step {
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+    }
+    .step-num {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(180deg, rgba(250,204,21,0.2), transparent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .how-step h3 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .how-step p { color: var(--text-dim); font-size: 0.95rem; }
+
+    /* ─── IDE GRID ─── */
+    .ide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .ide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px 20px;
+      text-align: center;
+      transition: all 0.25s;
+    }
+    .ide-card:hover {
+      border-color: rgba(250,204,21,0.15);
+      transform: translateY(-2px);
+    }
+    .ide-card .ide-emoji { font-size: 2rem; margin-bottom: 12px; display: block; }
+    .ide-card h4 { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .ide-card p { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* ─── PLATFORM SECTION ─── */
+    .platform-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .platform-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      text-align: center;
+      transition: all 0.25s;
+    }
+    .platform-card:hover {
+      border-color: rgba(250,204,21,0.15);
+      transform: translateY(-3px);
+    }
+    .platform-card .plat-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+    .platform-card h4 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .platform-card p { color: var(--text-dim); font-size: 0.88rem; }
+    .platform-card .plat-badge {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.15);
+    }
+
+    /* ─── FINAL CTA ─── */
+    .final-cta {
+      text-align: center;
+      padding: 120px 0;
+      position: relative;
+    }
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .final-cta h2 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .final-cta p {
+      color: var(--text-dim);
+      font-size: 1.15rem;
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+    }
+    footer p { color: var(--text-muted); font-size: 0.85rem; }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── MOBILE MENU ─── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 65px; left: 0; right: 0;
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      z-index: 99;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 8px 0;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .hero { padding: 130px 0 80px; }
+      .stats { gap: 32px; flex-wrap: wrap; }
+      .features-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr; gap: 16px; }
+      .how-step { padding: 24px 16px; }
+      .step-num { font-size: 3rem; }
+      .ide-grid { grid-template-columns: 1fr; }
+      .platform-cards { grid-template-columns: 1fr; }
+      .cta-group { flex-direction: column; }
+      .cta-btn { width: 100%; max-width: 340px; justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .stats { flex-direction: column; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="icon.png" alt="BugLOL" />
+      <span>BugLOL</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it Works</a>
+      <a href="#ides">IDEs</a>
+      <a href="#platforms">Platforms</a>
+      <a href="https://github.com/iMayuuR/BugLOL" target="_blank" class="nav-github">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        Star on GitHub
+      </a>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#features" onclick="closeMobileMenu()">Features</a>
+    <a href="#how" onclick="closeMobileMenu()">How it Works</a>
+    <a href="#ides" onclick="closeMobileMenu()">IDEs</a>
+    <a href="#platforms" onclick="closeMobileMenu()">Platforms</a>
+    <a href="https://github.com/iMayuuR/BugLOL" target="_blank">GitHub</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="container">
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Free & Open Source — Loved by Devs Worldwide
+      </div>
+
+      <h1>
+        Your Bugs Deserve<br/>
+        <span class="gradient-text">a Soundtrack</span>
+      </h1>
+
+      <p>
+        BugLOL plays a trending meme sound every time your code hits an error.
+        100K+ sounds. Zero setup. Pure chaos.
+      </p>
+
+      <div class="cta-group">
+        <a href="https://marketplace.visualstudio.com/items?itemName=iMayuuR.error-sound-effect" class="cta-btn primary" id="vscode-cta" onclick="installVSCode(event)" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.583 2.214l-4.865 4.58L7.28 2.605 2.4 4.38v15.24l4.88 1.775 5.438-4.19 4.865 4.58L22 19.8V4.2l-4.417-1.986zm-.383 3.986v11.6l-4.8-3.6v-4.4l4.8-3.6zM7.6 7.8l4.4 4.2-4.4 4.2V7.8z"/></svg>
+          Install in VS Code
+        </a>
+        <a href="https://open-vsx.org/extension/iMayuuR/error-sound-effect" target="_blank" class="cta-btn secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+          Other IDEs (Open VSX)
+        </a>
+      </div>
+      <span class="cta-sub">Works with Cursor, Antigravity, Windsurf, VSCodium, Gitpod & more</span>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val">100K+</div>
+          <div class="stat-label">Meme Sounds</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">9+</div>
+          <div class="stat-label">Compatible IDEs</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">3</div>
+          <div class="stat-label">Platforms</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything You Need to LOL at Bugs</h2>
+        <p class="section-desc">From 100K+ sounds to terminal detection — BugLOL turns every error into entertainment.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🎵</div>
+          <h3>100K+ Sound Library</h3>
+          <p>Search through over 100,000 meme sounds and trending audio clips from a massive online database.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">💀</div>
+          <h3>Terminal Error Detection</h3>
+          <p>Wrong command in the terminal? Sound plays instantly. Works with any failed shell command.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🔊</div>
+          <h3>One-Click Status Bar</h3>
+          <p>A persistent BugLOL button sits in your status bar. Click it anytime to search and change sounds.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">🔥</div>
+          <h3>Trending Sounds</h3>
+          <p>Opens with the hottest trending regional memes by default. Always stay up to date with viral audio.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">⌨️</div>
+          <h3>Keyboard Shortcut</h3>
+          <p>Press Ctrl+Shift+M (Cmd+Shift+M on Mac) to instantly open the sound search. No menus needed.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">📦</div>
+          <h3>Zero Bloat</h3>
+          <p>Downloads and caches only the sound you select. No heavy audio files bundled with the extension.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Three Steps to Comedy</h2>
+        <p class="section-desc">Go from install to laughing at your bugs in under a minute.</p>
+      </div>
+
+      <div class="how-steps">
+        <div class="how-step reveal">
+          <div class="step-num">01</div>
+          <h3>Install the Extension</h3>
+          <p>One click from VS Code Marketplace or Open VSX. Works in 9+ IDEs out of the box.</p>
+        </div>
+        <div class="how-step reveal">
+          <div class="step-num">02</div>
+          <h3>Pick Your Sound</h3>
+          <p>A welcome notification guides you to search and pick from 100K+ meme sounds instantly.</p>
+        </div>
+        <div class="how-step reveal">
+          <div class="step-num">03</div>
+          <h3>Write Buggy Code</h3>
+          <p>Every error triggers your selected sound. The more bugs, the more fun. Simple as that.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- COMPATIBLE IDEs -->
+  <section id="ides">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Compatibility</div>
+        <h2 class="section-title">Works Everywhere You Code</h2>
+        <p class="section-desc">Available on both Microsoft Marketplace and Open VSX — your IDE is covered.</p>
+      </div>
+
+      <div class="ide-grid">
+        <div class="ide-card reveal">
+          <span class="ide-emoji">💙</span>
+          <h4>VS Code</h4>
+          <p>Marketplace</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">⚡</span>
+          <h4>Cursor</h4>
+          <p>Marketplace / .vsix</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🚀</span>
+          <h4>Antigravity</h4>
+          <p>Marketplace / .vsix</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🏄</span>
+          <h4>Windsurf</h4>
+          <p>Open VSX</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🟢</span>
+          <h4>VSCodium</h4>
+          <p>Open VSX</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">☁️</span>
+          <h4>Gitpod</h4>
+          <p>Auto via Open VSX</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🌑</span>
+          <h4>Eclipse Theia</h4>
+          <p>Auto via Open VSX</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🖥️</span>
+          <h4>code-server</h4>
+          <p>Auto via Open VSX</p>
+        </div>
+        <div class="ide-card reveal">
+          <span class="ide-emoji">🔓</span>
+          <h4>Code - OSS</h4>
+          <p>Auto via Open VSX</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PLATFORM SUPPORT -->
+  <section id="platforms">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Platforms</div>
+        <h2 class="section-title">Runs on Every OS</h2>
+        <p class="section-desc">Native audio engine per platform. No extra config on Windows and macOS.</p>
+      </div>
+
+      <div class="platform-cards">
+        <div class="platform-card reveal">
+          <span class="plat-icon">🪟</span>
+          <h4>Windows</h4>
+          <p>XP through 11. Uses wscript.exe + Windows Media Player.</p>
+          <span class="plat-badge">Zero Setup</span>
+        </div>
+        <div class="platform-card reveal">
+          <span class="plat-icon">🍎</span>
+          <h4>macOS</h4>
+          <p>Leopard to Sequoia 15+. Built-in afplay — nothing to install.</p>
+          <span class="plat-badge">Zero Setup</span>
+        </div>
+        <div class="platform-card reveal">
+          <span class="plat-icon">🐧</span>
+          <h4>Linux</h4>
+          <p>mpg123 / ffplay / paplay fallback chain. Install one player and go.</p>
+          <span class="plat-badge">1 Command Setup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container reveal">
+      <h2>Ready to Make Debugging Fun?</h2>
+      <p>Install BugLOL now and never have a boring error again.</p>
+      <div class="cta-group">
+        <a href="https://marketplace.visualstudio.com/items?itemName=iMayuuR.error-sound-effect" class="cta-btn primary" onclick="installVSCode(event)" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.583 2.214l-4.865 4.58L7.28 2.605 2.4 4.38v15.24l4.88 1.775 5.438-4.19 4.865 4.58L22 19.8V4.2l-4.417-1.986zm-.383 3.986v11.6l-4.8-3.6v-4.4l4.8-3.6zM7.6 7.8l4.4 4.2-4.4 4.2V7.8z"/></svg>
+          Install in VS Code
+        </a>
+        <a href="https://open-vsx.org/extension/iMayuuR/error-sound-effect" target="_blank" class="cta-btn secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+          Other IDEs
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>
+        Built by <a href="https://github.com/iMayuuR" target="_blank">iMayuuR</a> &middot;
+        MIT License &middot;
+        <a href="https://github.com/iMayuuR/BugLOL" target="_blank">GitHub</a> &middot;
+        <a href="https://github.com/iMayuuR/BugLOL/issues" target="_blank">Report Bug</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smart VS Code Install: tries vscode: protocol first.
+    // If VS Code is installed, it opens directly. If not, falls back to marketplace.
+    function installVSCode(e) {
+      e.preventDefault();
+      const vsCodeUri = 'vscode:extension/iMayuuR.error-sound-effect';
+      const marketplaceUrl = 'https://marketplace.visualstudio.com/items?itemName=iMayuuR.error-sound-effect';
+
+      const startTime = Date.now();
+      let didNavigateAway = false;
+
+      function onBlur() { didNavigateAway = true; }
+      window.addEventListener('blur', onBlur);
+
+      window.location.href = vsCodeUri;
+
+      setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        if (!didNavigateAway && !document.hidden && (Date.now() - startTime) < 2500) {
+          window.open(marketplaceUrl, '_blank');
+        }
+      }, 1500);
+    }
+
+    // Mobile menu
+    function toggleMobileMenu() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileNav').classList.remove('open');
+    }
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
