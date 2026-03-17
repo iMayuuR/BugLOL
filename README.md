@@ -5,7 +5,7 @@ Turn your frustrating debugging sessions into instant comedy! **BugLOL** automat
 <p align="center">
   <strong>Publisher:</strong> <a href="https://github.com/iMayuuR">iMayuuR</a> ·
   <strong>Namespace:</strong> <code>iMayuuR</code> ·
-  <strong>Version:</strong> <code>1.3.6</code> ·
+  <strong>Version:</strong> <code>1.3.7</code> ·
   <strong>License:</strong> MIT
 </p>
 
@@ -171,8 +171,9 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ## 🤖 Credits
 
-Built with **[Antigravity](https://deepmind.google/) AI** — the agentic coding assistant by Google DeepMind that helped craft, debug, and ship every line of this extension. 💙
+- **🔊 Sound Effects** — All 100,000+ sound effects are sourced from **[Myinstants.com](https://www.myinstants.com/)**, the largest instant sound buttons website on the internet. BugLOL searches, streams, and caches sounds from their platform. Huge thanks to the Myinstants team and their community of creators for making this possible! 🙏
+- **🤖 Built with [Antigravity](https://deepmind.google/) AI** — the agentic coding assistant by Google DeepMind that helped craft, debug, and ship every line of this extension. 💙
 
 ## ⚠️ Disclaimer
 
-This extension does not host, distribute, or claim ownership of any audio files. All sounds are user-generated content fetched dynamically from public sources. Copyrights belong to their original creators/owners.
+This extension does not host, distribute, or claim ownership of any audio files. All sounds are user-generated content fetched dynamically from [Myinstants.com](https://www.myinstants.com/). Copyrights for individual sound clips belong to their original creators/uploaders. Myinstants.com is an independent platform and is not affiliated with BugLOL.

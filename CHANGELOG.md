@@ -2,10 +2,11 @@
 
 All notable changes to BugLOL will be documented in this file.
 
-## [1.3.6] - 2026-03-05
+## [1.3.7] - 2026-03-18
 
 ### ✨ Updates
 - **Brand Update**: Renamed extension to **BugLOL - 100K+ Error Sound Effects** for improved clarity and SEO.
+- **Credits**: Added proper attribution to [Myinstants.com](https://www.myinstants.com/) as the source of all 100K+ sound effects.
 
 ## [1.3.0] - 2026-03-04
 
