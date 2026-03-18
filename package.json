@@ -2,13 +2,13 @@
   "name": "error-sound-effect",
   "displayName": "BugLOL - 100K+ Error Sound Effects",
   "description": "Plays a trending meme sound when your code hits an error! 🔊 One-click status bar, ⌨️ Ctrl+Shift+M shortcut, 🔍 Search 100k+ sounds instantly.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "publisher": "iMayuuR",
   "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iMayuuR/BugLOL"
+    "url": "https://github.com/iMayuuR/buglol"
   },
   "engines": {
     "vscode": "^1.93.0"

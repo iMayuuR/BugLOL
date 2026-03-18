@@ -5,15 +5,15 @@ Turn your frustrating debugging sessions into instant comedy! **BugLOL** automat
 <p align="center">
   <strong>Publisher:</strong> <a href="https://github.com/iMayuuR">iMayuuR</a> ·
   <strong>Namespace:</strong> <code>iMayuuR</code> ·
-  <strong>Version:</strong> <code>1.5.0</code> ·
+  <strong>Version:</strong> <code>1.5.1</code> ·
   <strong>License:</strong> MIT
 </p>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=iMayuuR.error-sound-effect">🛒 VS Code Marketplace</a> ·
   <a href="https://open-vsx.org/extension/iMayuuR/error-sound-effect">📦 Open VSX</a> ·
-  <a href="https://github.com/iMayuuR/BugLOL">⭐ GitHub</a> ·
-  <a href="https://github.com/iMayuuR/BugLOL/issues">🐛 Report Bug</a>
+  <a href="https://github.com/iMayuuR/buglol">⭐ GitHub</a> ·
+  <a href="https://github.com/iMayuuR/buglol/issues">🐛 Report Bug</a>
 </p>
 
 ---

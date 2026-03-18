@@ -2,6 +2,11 @@
 
 All notable changes to BugLOL will be documented in this file.
 
+## [1.5.1] - 2026-03-18
+
+### 🔧 Maintenance
+- Documentation and repo links cleanup.
+
 ## [1.5.0] - 2026-03-18
 
 ### ✨ New
